@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Clean Blog - Start Bootstrap Theme</title>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe vs Computer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .status {
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #444;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            background-color: #333;
+            border-radius: 5px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        .cell:hover {
+            background-color: #f0f0f0;
+        }
+        .X {
+            color: #e74c3c;
+        }
+        .O {
+            color: #3498db;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #27ae60;
+        }
+        .difficulty {
+            margin-top: 15px;
+        }
+        select {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+    </style>
+            <meta charset="utf-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+            <meta name="description" content="" />
+            <meta name="author" content="" />
+            <title>Clean Blog - Start Bootstrap Theme</title>
+            <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+            <!-- Font Awesome icons (free version)-->
+            <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+            <!-- Google fonts-->
+            <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+            <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css" />
+            <!-- Core theme CSS (includes Bootstrap)-->
+            <link href="css/styles.css" rel="stylesheet" />
+        </head>
+    <body>
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+            <div class="container px-4 px-lg-5">
+                <a class="navbar-brand" href="index.html">Go Home</a>
+        </nav>
+        <!-- Main Content-->
+        <h1>Tic Tac Toe vs Computer</h1>
+        <div class="status" id="status">Your turn (X)</div>
+        <div class="board" id="board">
+            <div class="cell" data-index="0"></div>
+            <div class="cell" data-index="1"></div>
+            <div class="cell" data-index="2"></div>
+            <div class="cell" data-index="3"></div>
+            <div class="cell" data-index="4"></div>
+            <div class="cell" data-index="5"></div>
+            <div class="cell" data-index="6"></div>
+            <div class="cell" data-index="7"></div>
+            <div class="cell" data-index="8"></div>
+        </div>
+        <div class="difficulty">
+            <label for="difficulty">Difficulty: </label>
+            <select id="difficulty">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+                <option value="impossible">Impossible</option>
+            </select>
+        </div>
+        <button id="reset-button">Restart Game</button>
+    
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const board = document.getElementById('board');
+                const cells = document.querySelectorAll('.cell');
+                const status = document.getElementById('status');
+                const resetButton = document.getElementById('reset-button');
+                const difficultySelect = document.getElementById('difficulty');
+                
+                let currentBoard = Array(9).fill('');
+                let gameActive = true;
+                let playerSymbol = 'X';
+                let computerSymbol = 'O';
+                
+                // Winning combinations
+                const winPatterns = [
+                    [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+                    [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+                    [0, 4, 8], [2, 4, 6]             // Diagonals
+                ];
+                
+                // Initialize game
+                function initGame() {
+                    currentBoard = Array(9).fill('');
+                    gameActive = true;
+                    status.textContent = "Your turn (X)";
+                    cells.forEach(cell => {
+                        cell.textContent = '';
+                        cell.classList.remove('X', 'O');
+                    });
+                }
+                
+                // Handle player's move
+                function handleCellClick(e) {
+                    const cell = e.target;
+                    const index = parseInt(cell.getAttribute('data-index'));
+                    
+                    // Check if cell is already filled or game is over
+                    if (currentBoard[index] !== '' || !gameActive) {
+                        return;
+                    }
+                    
+                    // Player's move
+                    makeMove(index, playerSymbol);
+                    
+                    // Check game state after player's move
+                    if (gameActive) {
+                        // Computer's turn
+                        setTimeout(() => {
+                            computerMove();
+                        }, 500);
+                    }
+                }
+                
+                // Make a move (player or computer)
+                function makeMove(index, symbol) {
+                    currentBoard[index] = symbol;
+                    cells[index].textContent = symbol;
+                    cells[index].classList.add(symbol);
+                    
+                    // Check for win or draw
+                    if (checkWin(symbol)) {
+                        status.textContent = symbol === playerSymbol ? 
+                            "You win!" : "Computer wins!";
+                        gameActive = false;
+                    } else if (isDraw()) {
+                        status.textContent = "Game ended in a draw!";
+                        gameActive = false;
+                    } else {
+                        status.textContent = symbol === playerSymbol ? 
+                            "Computer's turn (O)" : "Your turn (X)";
+                    }
+                }
+                
+                // Computer's move based on difficulty
+                function computerMove() {
+                    if (!gameActive) return;
+                    
+                    const difficulty = difficultySelect.value;
+                    let moveIndex;
+                    
+                    switch (difficulty) {
+                        case 'easy':
+                            moveIndex = getRandomMove();
+                            break;
+                        case 'medium':
+                            moveIndex = Math.random() < 0.5 ? 
+                                getSmartMove() : getRandomMove();
+                            break;
+                        case 'hard':
+                            moveIndex = Math.random() < 0.8 ? 
+                                getSmartMove() : getRandomMove();
+                            break;
+                        case 'impossible':
+                            moveIndex = getBestMove();
+                            break;
+                        default:
+                            moveIndex = getRandomMove();
+                    }
+                    
+                    makeMove(moveIndex, computerSymbol);
+                }
+                
+                // Random move for easy difficulty
+                function getRandomMove() {
+                    const emptyCells = currentBoard
+                        .map((cell, index) => cell === '' ? index : null)
+                        .filter(index => index !== null);
+                    
+                    return emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                }
+                
+                // Smart move (win or block) for medium/hard difficulty
+                function getSmartMove() {
+                    // Try to win
+                    const winMove = findWinningMove(computerSymbol);
+                    if (winMove !== null) return winMove;
+                    
+                    // Try to block player's win
+                    const blockMove = findWinningMove(playerSymbol);
+                    if (blockMove !== null) return blockMove;
+                    
+                    // Take center if available
+                    if (currentBoard[4] === '') return 4;
+                    
+                    // Take a corner
+                    const corners = [0, 2, 6, 8].filter(idx => currentBoard[idx] === '');
+                    if (corners.length > 0) {
+                        return corners[Math.floor(Math.random() * corners.length)];
+                    }
+                    
+                    // Take any edge
+                    const edges = [1, 3, 5, 7].filter(idx => currentBoard[idx] === '');
+                    if (edges.length > 0) {
+                        return edges[Math.floor(Math.random() * edges.length)];
+                    }
+                    
+                    // Fallback to random move
+                    return getRandomMove();
+                }
+                
+                // Find winning move for a given symbol
+                function findWinningMove(symbol) {
+                    for (let i = 0; i < 9; i++) {
+                        if (currentBoard[i] === '') {
+                            // Try the move
+                            currentBoard[i] = symbol;
+                            
+                            // Check if it's a winning move
+                            const isWin = checkWin(symbol, false);
+                            
+                            // Undo the move
+                            currentBoard[i] = '';
+                            
+                            if (isWin) return i;
+                        }
+                    }
+                    return null;
+                }
+                
+                // Minimax algorithm for impossible difficulty
+                function getBestMove() {
+                    // Use minimax for best move
+                    let bestScore = -Infinity;
+                    let bestMove = null;
+                    
+                    for (let i = 0; i < 9; i++) {
+                        // Check if cell is empty
+                        if (currentBoard[i] === '') {
+                            // Try the move
+                            currentBoard[i] = computerSymbol;
+                            
+                            // Calculate score using minimax
+                            const score = minimax(currentBoard, 0, false);
+                            
+                            // Undo the move
+                            currentBoard[i] = '';
+                            
+                            // Update best score
+                            if (score > bestScore) {
+                                bestScore = score;
+                                bestMove = i;
+                            }
+                        }
+                    }
+                    
+                    return bestMove;
+                }
+                
+                // Minimax algorithm
+                function minimax(board, depth, isMaximizing) {
+                    // Check for terminal states
+                    if (checkForWin(board, computerSymbol)) {
+                        return 10 - depth;
+                    }
+                    
+                    if (checkForWin(board, playerSymbol)) {
+                        return depth - 10;
+                    }
+                    
+                    if (board.every(cell => cell !== '')) {
+                        return 0;
+                    }
+                    
+                    if (isMaximizing) {
+                        let bestScore = -Infinity;
+                        
+                        for (let i = 0; i < 9; i++) {
+                            if (board[i] === '') {
+                                board[i] = computerSymbol;
+                                const score = minimax(board, depth + 1, false);
+                                board[i] = '';
+                                bestScore = Math.max(score, bestScore);
+                            }
+                        }
+                        
+                        return bestScore;
+                    } else {
+                        let bestScore = Infinity;
+                        
+                        for (let i = 0; i < 9; i++) {
+                            if (board[i] === '') {
+                                board[i] = playerSymbol;
+                                const score = minimax(board, depth + 1, true);
+                                board[i] = '';
+                                bestScore = Math.min(score, bestScore);
+                            }
+                        }
+                        
+                        return bestScore;
+                    }
+                }
+                
+                // Check for win with a specific board state
+                function checkForWin(board, symbol) {
+                    return winPatterns.some(pattern => {
+                        return pattern.every(index => board[index] === symbol);
+                    });
+                }
+                
+                // Check for win
+                function checkWin(symbol, updateUI = true) {
+                    for (const pattern of winPatterns) {
+                        if (pattern.every(index => currentBoard[index] === symbol)) {
+                            if (updateUI) {
+                                // Highlight winning cells
+                                pattern.forEach(index => {
+                                    cells[index].style.backgroundColor = '#c8e6c9';
+                                });
+                            }
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                
+                // Check for draw
+                function isDraw() {
+                    return currentBoard.every(cell => cell !== '');
+                }
+                
+                // Event listeners
+                cells.forEach(cell => {
+                    cell.addEventListener('click', handleCellClick);
+                });
+                
+                resetButton.addEventListener('click', initGame);
+                
+                // Start the game
+                initGame();
+            });
+        </script>
+    </body>
+</html>

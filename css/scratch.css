@@ -1,0 +1,45 @@
+p{
+    font-weight: bold;
+    font-family: fantasy
+    font-size: 5px;
+}
+
+#top{
+    text-decoration: underline;
+    
+}
+
+.emphasizedText{
+    font-style: initial;
+    color: green;
+}
+body{
+    background-color: cornsilk;
+    font-family:fantasy;
+    text-align: center;
+    border:5px solid black;
+    margin: 10px;
+    padding: 100 px;
+
+}
+.centered-list{
+    padding-left:0;
+    list-style-position: outside;
+    margin: 0 auto;
+    display:table;
+    text-align: left;
+}
+.headerstyle{
+    font-style:oblique;
+    color: black;
+    text-shadow: 2px 2px 4px whitesmoke;
+}
+.subheaderstyle{
+    font-style:inherit;
+    color:black;
+    text-shadow: 2px 2px 4px whitesmoke;
+}
+.regtext{
+    font-family:fantasy;
+        text-align: center;
+}
